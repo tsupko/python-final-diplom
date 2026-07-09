@@ -22,19 +22,10 @@ USER_TYPE_CHOICES = (
 )
 
 
-# Create your models here.
-
-
 class UserManager(BaseUserManager):
-    """
-    Миксин для управления пользователями
-    """
     use_in_migrations = True
 
     def _create_user(self, email, password, **extra_fields):
-        """
-        Create and save a user with the given username, email, and password.
-        """
         if not email:
             raise ValueError('The given email must be set')
         email = self.normalize_email(email)
@@ -62,9 +53,6 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractUser):
-    """
-    Стандартная модель пользователей
-    """
     REQUIRED_FIELDS = []
     objects = UserManager()
     USERNAME_FIELD = 'email'
@@ -108,8 +96,6 @@ class Shop(models.Model):
                                 blank=True, null=True,
                                 on_delete=models.CASCADE)
     state = models.BooleanField(verbose_name='статус получения заказов', default=True)
-
-    # filename
 
     class Meta:
         verbose_name = 'Магазин'
@@ -240,10 +226,6 @@ class Order(models.Model):
     def __str__(self):
         return str(self.dt)
 
-    # @property
-    # def sum(self):
-    #     return self.ordered_items.aggregate(total=Sum("quantity"))["total"]
-
 
 class OrderItem(models.Model):
     objects = models.manager.Manager()
@@ -271,7 +253,6 @@ class ConfirmEmailToken(models.Model):
 
     @staticmethod
     def generate_key():
-        """ generates a pseudo random code using os.urandom and binascii.hexlify """
         return get_token_generator().generate_token()
 
     user = models.ForeignKey(
@@ -286,7 +267,6 @@ class ConfirmEmailToken(models.Model):
         verbose_name=_("When was this token generated")
     )
 
-    # Key field, though it is not the primary key of the model
     key = models.CharField(
         _("Key"),
         max_length=64,
