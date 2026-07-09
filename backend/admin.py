@@ -7,9 +7,6 @@ from backend.models import User, Shop, Category, Product, ProductInfo, Parameter
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    """
-    Панель управления пользователями
-    """
     model = User
 
     fieldsets = (
