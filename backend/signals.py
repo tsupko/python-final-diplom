@@ -40,6 +40,10 @@ def new_user_registered_signal(sender: Type[User], instance: User, created: bool
 
 @receiver(new_order)
 def new_order_signal(user_id, **kwargs):
+    """
+    Отправка уведомлений при новом заказе
+    """
+    # Получить пользователя
     user = User.objects.get(id=user_id)
     
     # Получить последний заказ пользователя
@@ -53,7 +57,7 @@ def new_order_signal(user_id, **kwargs):
             total=Sum(F('product_info__price') * F('quantity'))
         )['total'] or 0
 
-    # Письмо пользователю
+    # Отправить уведомление пользователю
     msg_user = EmailMultiAlternatives(
         "Обновление статуса заказа",
         'Заказ сформирован',
@@ -62,11 +66,12 @@ def new_order_signal(user_id, **kwargs):
     )
     msg_user.send()
     
-    # Письмо администратору
+    # Отправить уведомление администратору
+    admin_email = settings.ADMIN_EMAIL or settings.EMAIL_HOST_USER
     msg_admin = EmailMultiAlternatives(
         "Новый заказ",
         f'Заказ #{order.id} от {user.email} на сумму {total_sum}',
-        settings.EMAIL_HOST_USER or settings.ADMIN_EMAIL,
-        [settings.EMAIL_HOST_USER or settings.ADMIN_EMAIL]
+        settings.EMAIL_HOST_USER,
+        [admin_email]
     )
     msg_admin.send()

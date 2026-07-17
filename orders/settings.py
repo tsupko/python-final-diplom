@@ -30,6 +30,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['*']
 
 # Admin email for order notifications
+# Для продакшена замените на реальный email администратора
 ADMIN_EMAIL = 'admin@example.com'
 
 # Application definition

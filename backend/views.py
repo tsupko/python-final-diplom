@@ -67,14 +67,14 @@ class ConfirmAccount(APIView):
 class AccountDetails(APIView):
     def get(self, request: Request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         if 'password' in request.data:
             errors = {}
@@ -164,7 +164,7 @@ class ProductDetailView(APIView):
 class BasketView(APIView):
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
         basket = Order.objects.filter(
             user_id=request.user.id, state='basket').prefetch_related(
             'ordered_items__product_info__product__category',
@@ -176,7 +176,7 @@ class BasketView(APIView):
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         items_sting = request.data.get('items')
         if items_sting:
@@ -206,7 +206,7 @@ class BasketView(APIView):
 
     def delete(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         items_sting = request.data.get('items')
         if items_sting:
@@ -226,7 +226,7 @@ class BasketView(APIView):
 
     def put(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         items_sting = request.data.get('items')
         if items_sting:
@@ -249,7 +249,7 @@ class BasketView(APIView):
 class PartnerUpdate(APIView):
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         if request.user.type != 'shop':
             return JsonResponse({'Status': False, 'Error': 'Только для магазинов'}, status=403)
@@ -296,7 +296,7 @@ class PartnerUpdate(APIView):
 class PartnerState(APIView):
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         if request.user.type != 'shop':
             return JsonResponse({'Status': False, 'Error': 'Только для магазинов'}, status=403)
@@ -307,7 +307,7 @@ class PartnerState(APIView):
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         if request.user.type != 'shop':
             return JsonResponse({'Status': False, 'Error': 'Только для магазинов'}, status=403)
@@ -325,7 +325,7 @@ class PartnerState(APIView):
 class PartnerOrders(APIView):
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         if request.user.type != 'shop':
             return JsonResponse({'Status': False, 'Error': 'Только для магазинов'}, status=403)
@@ -343,7 +343,7 @@ class PartnerOrders(APIView):
 class ContactView(APIView):
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
         contact = Contact.objects.filter(
             user_id=request.user.id)
         serializer = ContactSerializer(contact, many=True)
@@ -351,7 +351,7 @@ class ContactView(APIView):
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         if {'city', 'street', 'phone'}.issubset(request.data):
             request.data._mutable = True
@@ -368,7 +368,7 @@ class ContactView(APIView):
 
     def delete(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         items_sting = request.data.get('items')
         if items_sting:
@@ -387,7 +387,7 @@ class ContactView(APIView):
 
     def put(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         if 'id' in request.data:
             if request.data['id'].isdigit():
@@ -407,7 +407,7 @@ class ContactView(APIView):
 class OrderView(APIView):
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
         order = Order.objects.filter(
             user_id=request.user.id).exclude(state='basket').prefetch_related(
             'ordered_items__product_info__product__category',
@@ -419,7 +419,7 @@ class OrderView(APIView):
 
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
-            return JsonResponse({'Status': False, 'Error': 'Log in required'}, status=403)
+            return JsonResponse({'Status': False, 'Error': 'Требуется вход в систему'}, status=403)
 
         if {'id', 'contact'}.issubset(request.data):
             if request.data['id'].isdigit():
@@ -429,7 +429,7 @@ class OrderView(APIView):
                         contact_id=request.data['contact'],
                         state='new')
                 except IntegrityError as error:
-                    logger.error(f"Error updating order: {error}")
+                    logger.error(f"Ошибка при обновлении заказа: {error}")
                     return JsonResponse({'Status': False, 'Errors': 'Неправильно указаны аргументы'})
                 else:
                     if is_updated:
