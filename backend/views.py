@@ -1,5 +1,8 @@
 from distutils.util import strtobool
+import logging
 from rest_framework.request import Request
+
+logger = logging.getLogger(__name__)
 from django.contrib.auth import authenticate
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
@@ -12,6 +15,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.generics import ListAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from ujson import loads as load_json
 from yaml import load as load_yaml, Loader
 
 from backend.models import Shop, Category, Product, ProductInfo, Parameter, ProductParameter, Order, OrderItem, \
@@ -139,6 +143,24 @@ class ProductInfoView(APIView):
         return Response(serializer.data)
 
 
+class ProductDetailView(APIView):
+    """
+    Класс для получения информации об отдельном товаре
+    """
+    def get(self, request, product_id, *args, **kwargs):
+        try:
+            product_info = ProductInfo.objects.select_related(
+                'shop', 'product__category'
+            ).prefetch_related(
+                'product_parameters__parameter'
+            ).get(pk=product_id)
+            
+            serializer = ProductInfoSerializer(product_info)
+            return Response(serializer.data)
+        except ProductInfo.DoesNotExist:
+            return JsonResponse({'Status': False, 'Errors': 'Товар не найден'}, status=404)
+
+
 class BasketView(APIView):
     def get(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -159,7 +181,7 @@ class BasketView(APIView):
         items_sting = request.data.get('items')
         if items_sting:
             try:
-                items_dict = eval(items_sting)
+                items_dict = load_json(items_sting)
             except ValueError:
                 return JsonResponse({'Status': False, 'Errors': 'Неверный формат запроса'})
             else:
@@ -209,7 +231,7 @@ class BasketView(APIView):
         items_sting = request.data.get('items')
         if items_sting:
             try:
-                items_dict = eval(items_sting)
+                items_dict = load_json(items_sting)
             except ValueError:
                 return JsonResponse({'Status': False, 'Errors': 'Неверный формат запроса'})
             else:
@@ -407,7 +429,7 @@ class OrderView(APIView):
                         contact_id=request.data['contact'],
                         state='new')
                 except IntegrityError as error:
-                    print(error)
+                    logger.error(f"Error updating order: {error}")
                     return JsonResponse({'Status': False, 'Errors': 'Неправильно указаны аргументы'})
                 else:
                     if is_updated:

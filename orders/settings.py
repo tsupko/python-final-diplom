@@ -29,6 +29,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+# Admin email for order notifications
+ADMIN_EMAIL = 'admin@example.com'
+
 # Application definition
 
 INSTALLED_APPS = [

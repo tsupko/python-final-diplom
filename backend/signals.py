@@ -6,7 +6,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver, Signal
 from django_rest_passwordreset.signals import reset_password_token_created
 
-from backend.models import ConfirmEmailToken, User
+from backend.models import ConfirmEmailToken, User, Order
 
 new_user_registered = Signal()
 
@@ -41,11 +41,32 @@ def new_user_registered_signal(sender: Type[User], instance: User, created: bool
 @receiver(new_order)
 def new_order_signal(user_id, **kwargs):
     user = User.objects.get(id=user_id)
+    
+    # Получить последний заказ пользователя
+    order = Order.objects.filter(user_id=user_id).exclude(state='basket').first()
+    
+    # Посчитать сумму заказа
+    total_sum = 0
+    if order:
+        from django.db.models import Sum, F
+        total_sum = order.ordered_items.aggregate(
+            total=Sum(F('product_info__price') * F('quantity'))
+        )['total'] or 0
 
-    msg = EmailMultiAlternatives(
+    # Письмо пользователю
+    msg_user = EmailMultiAlternatives(
         "Обновление статуса заказа",
         'Заказ сформирован',
         settings.EMAIL_HOST_USER,
         [user.email]
     )
-    msg.send()
+    msg_user.send()
+    
+    # Письмо администратору
+    msg_admin = EmailMultiAlternatives(
+        "Новый заказ",
+        f'Заказ #{order.id} от {user.email} на сумму {total_sum}',
+        settings.EMAIL_HOST_USER or settings.ADMIN_EMAIL,
+        [settings.EMAIL_HOST_USER or settings.ADMIN_EMAIL]
+    )
+    msg_admin.send()

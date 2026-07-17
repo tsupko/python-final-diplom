@@ -3,7 +3,7 @@ from django_rest_passwordreset.views import reset_password_request_token, reset_
 
 from backend.views import PartnerUpdate, RegisterAccount, LoginAccount, CategoryView, ShopView, ProductInfoView, \
     BasketView, \
-    AccountDetails, ContactView, OrderView, PartnerState, PartnerOrders, ConfirmAccount
+    AccountDetails, ContactView, OrderView, PartnerState, PartnerOrders, ConfirmAccount, ProductDetailView
 
 app_name = 'backend'
 urlpatterns = [
@@ -20,6 +20,7 @@ urlpatterns = [
     path('categories', CategoryView.as_view(), name='categories'),
     path('shops', ShopView.as_view(), name='shops'),
     path('products', ProductInfoView.as_view(), name='products'),
+    path('products/<int:product_id>', ProductDetailView.as_view(), name='product-detail'),
     path('basket', BasketView.as_view(), name='basket'),
     path('order', OrderView.as_view(), name='order'),
 
